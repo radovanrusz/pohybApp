@@ -17,14 +17,37 @@ app.post('/pohyby', (req, res)=>{
   })
 });
 
-app.get('/pohyby',(req, res)=>{
-  Pohyb.find({}).then((pohyby)=>{
+app.get('/pohyby', (req, res) => {
+  const { mvm1, kmat, mnozstvi, hmotnost } = req.query;
+  console.log(req.query);
+  // eslint-disable-next-line prefer-template
+  const params = {};
+  if (typeof mvm1 !== 'undefined')
+  {
+    params.mvm1 = { $regex: '.*' + mvm1 + '.*'};
+  }
+  if (typeof kmat !== 'undefined')
+  {
+    params.kmat = { $regex: '.*' + kmat + '.*' };
+  }
+
+  if (typeof mnozstvi !== 'undefined')
+  {
+    params.mnozstvi = { $eq: mnozstvi };
+  }
+
+  if (typeof hmotnost !== 'undefined')
+  {
+    params.hmotnost = { $eq: hmotnost };
+  }
+
+  Pohyb.find(params).limit(5).then((pohyby) => {
     res.send(pohyby);
-  }).catch((error)=>{
+  }).catch((error) => {
     res.status(500).send(error);
   });
 });
 
-app.listen(port, ()=>{
+app.listen(port, () => {
   console.log('Server running on port ', port);
 });
