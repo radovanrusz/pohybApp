@@ -23,8 +23,8 @@ try {
   const topics = [
     {
       topic: kafkaTopic,
-      partition: 0 
-    }
+      partition: 0,
+    },
   ];
   const options = {
   // autoCommit: true,
@@ -36,7 +36,7 @@ try {
   };
 
   const consumer = new kafka.Consumer(client, topics, options);
-  consumer.setOffset(kafkaTopic, 0, 0);
+  // consumer.setOffset(kafkaTopic, 0, 0);
 
   client.on('ready', () => {
     console.log('Client ready!');
@@ -50,7 +50,29 @@ try {
     mDate = new Date();
     mDateStr = mDate.toString('dddd MMM yyyy h:mm:ss');
     console.log(`${mDateStr} : consumer.on() invoked.`);
-    console.log(JSON.parse(message.value));
+    // console.log(message.value);
+
+    const pohyb = new Pohyb(JSON.parse(message.value));
+    pohyb.save().then(() => {
+      consumer.commit((err, dta) => {
+        if (err) {
+          mDate = new Date();
+          mDateStr = mDate.toString('dddd MMM yyyy h:mm:ss');
+          console.log(`${mDateStr}: Error: ${err}`);
+        } else {
+          mDate = new Date();
+          mDateStr = mDate.toString('dddd MMM yyyy h:mm:ss');
+          console.log(`${mDateStr} : Commit success: `, dta);
+        }
+      });
+      mDate = new Date();
+      mDateStr = mDate.toString('dddd MMM yyyy h:mm:ss');
+      console.log(`${mDateStr} : Journal record saved successfully: ${message.value}`);
+    }).catch((error) => {
+      mDate = new Date();
+      mDateStr = mDate.toString('dddd MMM yyyy h:mm:ss');
+      console.log(`${mDateStr}: journalrec.save() error: ${error}`);
+    });
   });
 
   consumer.on('error', (err) => {
@@ -72,12 +94,17 @@ app.post('/pohyby', (req, res) => {
 });
 
 app.get('/pohyby', (req, res) => {
-  const { mvm1, kmat, mnozstvi, hmotnost } = req.query;
+  const {
+    mvm1,
+    kmat,
+    mnozstvi,
+    hmotnost,
+  } = req.query;
   console.log(req.query);
   // eslint-disable-next-line prefer-template
   const params = {};
   if (typeof mvm1 !== 'undefined') {
-    params.mvm1 = { $regex: `.*${mvm1}.*`};
+    params.mvm1 = { $regex: `.*${mvm1}.*` };
   }
 
   if (typeof kmat !== 'undefined') {

@@ -6,7 +6,7 @@ const Pohyb = mongoose.model('Pohyb', {
   kmat: { type: String },
   mnozstvi: { type: Number },
   hmotnost: { type: Number },
-  datumcas_akt: { type: Date, default: Date.now }
+  datumcas_akt: { type: Date, default: Date.now },
 });
 
 module.exports = Pohyb;
