@@ -5,7 +5,7 @@ const router = new express.Router();
 require('../db/mongoose');
 const Journal = require('../models/journal');
 
-router.post('/wmj', (req, res) => {
+router.post('/journal', (req, res) => {
   const journal = new Journal(req.body);
   journal.save().then(() => {
     res.send(journal);
@@ -14,7 +14,7 @@ router.post('/wmj', (req, res) => {
   });
 });
 
-router.get('/wmj', (req, res) => {
+router.get('/journal', (req, res) => {
   const {
     mvm1,
     kmat,
