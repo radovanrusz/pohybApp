@@ -16,7 +16,7 @@ router.post('/journal', (req, res) => {
 
 router.get('/journal', (req, res) => {
   const {
-    mvm1,
+    mvm2,
     kmat,
     mnozstvi,
     hmotnost,
@@ -24,8 +24,8 @@ router.get('/journal', (req, res) => {
   console.log(req.query);
   // eslint-disable-next-line prefer-template
   const params = {};
-  if (typeof mvm1 !== 'undefined') {
-    params.mvm1 = { $regex: `.*${mvm1}.*` };
+  if (typeof mvm2 !== 'undefined') {
+    params.mvm2 = { $regex: `.*${mvm2}.*` };
   }
 
   if (typeof kmat !== 'undefined') {
