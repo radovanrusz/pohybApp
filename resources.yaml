@@ -112,7 +112,7 @@ items:
 ## DEPLOYMENT CONFIG
   - apiVersion: v1
     kind: DeploymentConfig
-    metadata: 
+    metadata:
       name: ${NAME}
       labels:
         app: apache-kafka
