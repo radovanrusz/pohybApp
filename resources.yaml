@@ -3,116 +3,115 @@ apiVersion: v1
 metadata: {}
 items:
 - apiVersion: v1
-  kind: Template
-  metadata:
-    name: apache-kafka
-    annotations:
-      description: 1-pod Apache Kafka
-      tags: messaging,streaming,kafka
-    labels:
-      app: apache-kafka
-  parameters:
-  - name: NAME
-    description: Name prefix for each object created
-    required: true
-    value: apache-kafka
-  - name: IMAGE
-    description: Image with Apache Kafka and Apache ZooKeeper
-    required: true
-    #value: rondinif/openshift-kafka
-    value: jhusak/apache-kafka
-  objects:
-   
+  kind: Template
+  metadata:
+    name: apache-kafka
+    annotations:
+      description: 1-pod Apache Kafka
+      tags: messaging,streaming,kafka
+    labels:
+      app: apache-kafka
+  parameters:
+  - name: NAME
+    description: Name prefix for each object created
+    required: true
+    value: apache-kafka
+  - name: IMAGE
+    description: Image with Apache Kafka and Apache ZooKeeper
+    required: true
+    value: jhusak/apache-kafka
+  objects:
+   
 ## DEPLOYMENT CONFIG
-  - apiVersion: v1
-    kind: DeploymentConfig
-    metadata:
-      name: ${NAME}
-      labels:
-        app: apache-kafka
-    spec:
-      replicas: 1
-      selector:
-        deploymentconfig: ${NAME}
-      template:
-        metadata:
-          labels:
-            deploymentconfig: ${NAME}
-            app: apache-kafka
-        spec:
-          hostname: ${NAME}
-          containers:
-          - name: apache-kafka
-            image: ${IMAGE}
-            command:
-              - /bin/sh
-              - '-c'
-            args:
-              - >-
-                echo JH starting;  rm /tmp/kafka-logs/.lock 2>/dev/null;
-                bin/kafka-server-start.sh config/server.properties --override
-                advertised.host.name=apache-kafka --override
-                log.segment.bytes=10485760 --override log.retention.bytes=10485760;
-#            volumeMounts:
-#            - mountPath: /tmp/kafka-logs
-#              name: kafka-logs
-            ports:
-            - containerPort: 9092
-#            livenessProbe:
-#              exec:
-#                command:
-#                  - sh
-#                  - '-c'
-#                  - '/opt/kafka/kafka-liveness-chk.sh'
-#              failureThreshold: 3
-#              periodSeconds: 10
-#              successThreshold: 1
-#              timeoutSeconds: 1
-            lifecycle:
-              preStop:
-                exec:
-                  command:
-                    - sh
-                    - '-c'
-                    - '/opt/kafka/bin/kafka-server-stop.sh'
-          - name: apache-zookeeper
-            image: ${IMAGE}
-            command:
-            - bin/zookeeper-server-start.sh
-            args:
-            - config/zookeeper.properties
-#            volumeMounts:
-#            - mountPath: /tmp/zookeeper
-#              name: zookeeper
-            ports:
-            - containerPort: 2181
-            lifecycle:
-              preStop:
-                exec:
-                  command:
-                    - sh
-                    - '-c'
-                    - '/opt/kafka/bin/zookeeper-server-stop.sh'
-#          volumes:
-#          - name: zookeeper
-#            persistentVolumeClaim:
-#              claimName: apache-zookeeper
-#         - name: kafka-logs
-#            persistentVolumeClaim:
-#              claimName: apache-kafka
-  
-  ## SERVICE
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      labels:
-        app: apache-kafka
-      name: ${NAME}
-    spec:
-      ports:
-      - name: kafka
-        port: 9092
-      - name: zookeeper
-        port: 2181
-      selector:
-        deploymentconfig: ${NAME}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      name: ${NAME}
+      labels:
+        app: apache-kafka
+    spec:
+      replicas: 1
+      selector:
+        deploymentconfig: ${NAME}
+      template:
+        metadata:
+          labels:
+            deploymentconfig: ${NAME}
+            app: apache-kafka
+        spec:
+          hostname: ${NAME}
+          containers:
+          - name: apache-kafka
+            image: ${IMAGE}
+            command:
+              - /bin/sh
+              - '-c'
+            args:
+              - >-
+                echo JH starting;  rm /tmp/kafka-logs/.lock 2>/dev/null;
+                bin/kafka-server-start.sh config/server.properties --override
+                advertised.host.name=apache-kafka --override
+                log.segment.bytes=10485760 --override log.retention.bytes=10485760;
+#            volumeMounts:
+#            - mountPath: /tmp/kafka-logs
+#              name: kafka-logs
+            ports:
+            - containerPort: 9092
+#            livenessProbe:
+#              exec:
+#                command:
+#                  - sh
+#                  - '-c'
+#                  - '/opt/kafka/kafka-liveness-chk.sh'
+#              failureThreshold: 3
+#              periodSeconds: 10
+#              successThreshold: 1
+#              timeoutSeconds: 1
+            lifecycle:
+              preStop:
+                exec:
+                  command:
+                    - sh
+                    - '-c'
+                    - '/opt/kafka/bin/kafka-server-stop.sh'
+          - name: apache-zookeeper
+            image: ${IMAGE}
+            command:
+            - bin/zookeeper-server-start.sh
+            args:
+            - config/zookeeper.properties
+#            volumeMounts:
+#            - mountPath: /tmp/zookeeper
+#              name: zookeeper
+            ports:
+            - containerPort: 2181
+            lifecycle:
+              preStop:
+                exec:
+                  command:
+                    - sh
+                    - '-c'
+                    - '/opt/kafka/bin/zookeeper-server-stop.sh'
+#          volumes:
+#          - name: zookeeper
+#            persistentVolumeClaim:
+#              claimName: apache-zookeeper
+#         - name: kafka-logs
+#            persistentVolumeClaim:
+#              claimName: apache-kafka
+  
+  ## SERVICE
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: apache-kafka
+      name: ${NAME}
+    spec:
+      ports:
+      - name: kafka
+        port: 9092
+      - name: zookeeper
+        port: 2181
+      selector:
+        deploymentconfig: ${NAME}
