@@ -19,7 +19,6 @@ items:
   - name: IMAGE
     description: Image with Apache Kafka and Apache ZooKeeper
     required: true
-    #value: rondinif/openshift-kafka
     value: jhusak/apache-kafka
   objects:
    
