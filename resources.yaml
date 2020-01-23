@@ -21,7 +21,6 @@ items:
     required: true
     value: jhusak/apache-kafka
   objects:
-   
 ## DEPLOYMENT CONFIG
   - apiVersion: v1
     kind: DeploymentConfig
